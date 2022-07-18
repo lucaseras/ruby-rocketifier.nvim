@@ -38,7 +38,7 @@ M.transform_key_in_lines = function(row_start, row_end)
 
   local new_lines = {}
   for _, current_line in pairs(lines) do
-    local start, stop = string.find(current_line, "%a+:")
+    local start, stop = string.find(current_line, "[%a_!]+:")
 
     -- proceed to next line if could not find pattern
     if start == nil then
