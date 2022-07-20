@@ -48,22 +48,22 @@ end
 -- Colon to rocket actions --
 
 M.colon_to_rocket.transformation = function(key)
-  return string.gsub(key, M.colon_to_rocket.pattern(), "'%1' =>")
+  return string.gsub(key, M.colon_to_rocket.pattern(), "'%1' => ")
 end
 
 M.colon_to_rocket.pattern = function()
-  return "([%a_!]+):"
+  return "(%S+): "
 end
 
 -- Rocket to colon actions --
 
 M.rocket_to_colon.transformation = function(key)
   -- return string.sub(key, 2, #key - 4) .. ":"
-  return string.gsub(key, M.rocket_to_colon.pattern(), '%1:')
+  return string.gsub(key, M.rocket_to_colon.pattern(), '%1: ')
 end
 
 M.rocket_to_colon.pattern = function()
-  return "[\"']([%a_!:]+)[\"'] =>"
+  return "'(%S+)' => "
 end
 
 return M
