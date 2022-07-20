@@ -1,12 +1,14 @@
 local M = {}
 
-local transformations = require("ruby-rocketifier.transformations")
+local commands = require("ruby-rocketifier.commands")
+
+table.unpack = table.unpack or unpack -- 5.1 compatibility
 
 M.default_opts = {
   keymaps = {
-    to_rocket = '<leader>l',
+    to_rocket = false,
     to_colon = false,
-    toggle = "crh",
+    toggle = "<leader>l",
   }
 }
 
@@ -37,19 +39,48 @@ end
 
 M.buffer_setup = function(buffer_opts)
   M.merge_opts_into_buffer_opts(buffer_opts)
+  local opts = { silent = false, buffer = true }
+
+  M.add_keymap({
+    mode = "n",
+    lhs = M.get_current_opts().keymaps.toggle,
+    rhs = commands.toggle,
+    opts = opts,
+  })
+
+  M.add_keymap({
+    mode = "x",
+    lhs = M.get_current_opts().keymaps.toggle,
+    rhs = commands.visual_toggle,
+    opts = opts,
+  })
 
   M.add_keymap({
     mode = "n",
     lhs = M.get_current_opts().keymaps.to_rocket,
-    rhs = transformations.transform_to_rocket,
-    opts = { silent = false, buffer = true }
+    rhs = commands.to_rocket,
+    opts = opts,
   })
 
   M.add_keymap({
-    mode = "v",
+    mode = "x",
     lhs = M.get_current_opts().keymaps.to_rocket,
-    rhs = "<Esc><Cmd>lua require('ruby-rocketifier.transformations').visual_transform_to_rocket()<CR>",
-    opts = { silent = false, buffer = true }
+    rhs = commands.visual_to_rocket,
+    opts = opts,
+  })
+
+  M.add_keymap({
+    mode = "n",
+    lhs = M.get_current_opts().keymaps.to_colon,
+    rhs = commands.to_colon,
+    opts = opts,
+  })
+
+  M.add_keymap({
+    mode = "x",
+    lhs = M.get_current_opts().keymaps.to_colon,
+    rhs = commands.visual_to_colon,
+    opts = opts,
   })
 end
 

@@ -8,9 +8,19 @@ M.get_cursor_row = function()
   return M.get_cursor_position()[1]
 end
 
+M.set_lines = function(start, stop, lines)
+  vim.api.nvim_buf_set_lines(0, start - 1, stop, false, lines)
+end
+
+
+M.get_lines = function(start, stop)
+  return vim.api.nvim_buf_get_lines(0, start - 1, stop, false)
+end
+
 M.get_visual_selection_range = function()
-  local _, start_row, _, _ = unpack(vim.fn.getpos("'<"))
-  local _, end_row, _, _ = unpack(vim.fn.getpos("'>"))
+  vim.cmd([[execute "normal! \<esc>"]])
+  local _, start_row, _, _ = table.unpack(vim.fn.getpos("'<"))
+  local _, end_row, _, _ = table.unpack(vim.fn.getpos("'>"))
   if start_row < end_row then
     return start_row, end_row
   else
@@ -18,5 +28,10 @@ M.get_visual_selection_range = function()
   end
 end
 
+M.run_visual_command = function(command)
+  local row_start, row_end = M.get_visual_selection_range()
+
+  command(row_start, row_end)
+end
 
 return M
