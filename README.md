@@ -5,9 +5,9 @@ Hash rockets ↔ Hash colons
 In Ruby, sometimes you want to transform hashes from using hash rockets:
 ```ruby
 {
-  'foo': 0, 
-  'bar': 1, 
-  'baz': 2,
+  'foo' => 0, 
+  'bar' => 1, 
+  'baz' => 2,
 }
 ```
 To the newer symbol syntax:
