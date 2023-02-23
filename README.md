@@ -35,7 +35,7 @@ You can define your own keymaps like so:
 ```lua
 require('ruby-rocketifier').setup({
   keymaps = {
-    to_rocket = false
+    to_rocket = false,
     to_colon = false,
     toggle = "<leader>l",
   }
