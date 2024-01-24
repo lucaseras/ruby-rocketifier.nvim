@@ -10,12 +10,18 @@ M.figure_out_action_from_line = function(row)
   local line = utils.get_lines(row, row)[1]
 
   local colon_match = string.find(line, M.colon_to_rocket.pattern())
+  local rocket_match = string.find(line, M.rocket_to_colon.pattern())
 
+  local action
   if colon_match ~= nil then
-    return M.colon_to_rocket
+    action = M.colon_to_rocket
+  elseif rocket_match ~= nil then
+    action = M.rocket_to_colon
   else
-    return M.rocket_to_colon
+    return false, nil
   end
+
+  return true, action
 end
 
 local function transform_line(line, action, index)
@@ -61,12 +67,11 @@ end
 -- Rocket to colon actions --
 
 M.rocket_to_colon.transformation = function(key)
-  -- return string.sub(key, 2, #key - 4) .. ":"
   return string.gsub(key, M.rocket_to_colon.pattern(), '%1:')
 end
 
 M.rocket_to_colon.pattern = function()
-  return "'(".. key_valid_chars_regexp .. ")' =>"
+  return "[\'\"](".. key_valid_chars_regexp .. ")[\'\"] =>"
 end
 
 return M
