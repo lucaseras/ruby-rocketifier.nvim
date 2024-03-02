@@ -1,27 +1,31 @@
-local M = {
-  colon_to_rocket = {},
-  rocket_to_colon = {},
-}
+local M = {}
 
 local utils = require('ruby-rocketifier.utils')
+local patterns = require('ruby-rocketifier.patterns')
 
 -- Given a line, figure out what action should be done
 M.figure_out_action_from_line = function(row)
   local line = utils.get_lines(row, row)[1]
 
-  local colon_match = string.find(line, M.colon_to_rocket.pattern())
-  local rocket_match = string.find(line, M.rocket_to_colon.pattern())
+  local result_action
+  local current_match
 
-  local action
-  if colon_match ~= nil then
-    action = M.colon_to_rocket
-  elseif rocket_match ~= nil then
-    action = M.rocket_to_colon
-  else
+  for _, action in pairs(patterns) do
+    local pattern_match = string.find(line, action.pattern())
+
+    if (current_match and pattern_match and pattern_match < current_match) or
+      (not current_match and pattern_match)
+    then
+      result_action = action
+      current_match = pattern_match
+    end
+  end
+
+  if not result_action then
     return false, nil
   end
 
-  return true, action
+  return true, result_action
 end
 
 local function transform_line(line, action, index)
@@ -50,28 +54,6 @@ M.apply_action = function(row_start, row_end, action)
   end
 
   utils.set_lines(row_start, row_end, new_lines)
-end
-
-local key_valid_chars_regexp = "[%w:_?!]+"
-
--- Colon to rocket actions --
-
-M.colon_to_rocket.transformation = function(key)
-  return string.gsub(key, M.colon_to_rocket.pattern(), "'%1' =>")
-end
-
-M.colon_to_rocket.pattern = function()
-  return "(".. key_valid_chars_regexp .. "):"
-end
-
--- Rocket to colon actions --
-
-M.rocket_to_colon.transformation = function(key)
-  return string.gsub(key, M.rocket_to_colon.pattern(), '%1:')
-end
-
-M.rocket_to_colon.pattern = function()
-  return "[\'\"](".. key_valid_chars_regexp .. ")[\'\"] =>"
 end
 
 return M
